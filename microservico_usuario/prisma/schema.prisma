@@ -7,49 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id        Int      @id @default(autoincrement())
-  nome      String
-  email     String   @unique
-  senha     String
-  tipo      String   @default("Leitor")
-  status    String   @default("Ativo")
-  createdAt DateTime @default(now())
-
-  enderecos Endereco[]
-  telefones Telefone[]
-  logs      LogAtividade[]
-
-  @@map("usuarios")
+model endereco {
+  endereco_id          Int       @id @default(autoincrement())
+  endereco_rua         String    @db.VarChar(200)
+  endereco_numero      String    @db.VarChar(20)
+  endereco_complemento String?   @db.VarChar(100)
+  endereco_bairro      String?   @db.VarChar(100)
+  endereco_cidade      String    @db.VarChar(100)
+  endereco_estado      String    @db.VarChar(2)
+  endereco_cep         String    @db.VarChar(9)
+  usuario              usuario[]
 }
 
-model Endereco {
-  id         Int     @id @default(autoincrement())
-  logradouro String
-  numero     String
-  cidade     String
-  usuarioId  Int
-  usuario    Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-
-  @@map("enderecos")
+model telefone {
+  telefone_id     Int                     @id @default(autoincrement())
+  telefone_numero String                  @db.VarChar(20)
+  telefone_tipo   telefone_telefone_tipo?
+  usuario         usuario[]
 }
 
-model Telefone {
-  id        Int     @id @default(autoincrement())
-  ddd       String
-  numero    String
-  usuarioId Int
-  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+model usuario {
+  usuario_id            Int                     @id @default(autoincrement())
+  usuario_nome          String                  @db.VarChar(200)
+  usuario_email         String                  @unique(map: "usuario_email") @db.VarChar(150)
+  usuario_senha         String                  @db.VarChar(255)
+  usuario_tipo          usuario_usuario_tipo
+  usuario_status        usuario_usuario_status?
+  usuario_data_cadastro DateTime                @db.Date
+  endereco_id           Int
+  telefone_id           Int
+  endereco              endereco                @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_endereco1")
+  telefone              telefone                @relation(fields: [telefone_id], references: [telefone_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_telefone1")
 
-  @@map("telefones")
+  @@index([endereco_id], map: "fk_usuario_endereco1_idx")
+  @@index([telefone_id], map: "fk_usuario_telefone1_idx")
 }
 
-model LogAtividade {
-  id        Int      @id @default(autoincrement())
-  usuarioId Int
-  acao      String
-  data      DateTime @default(now())
-  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+enum telefone_telefone_tipo {
+  Celular
+  Residencial
+  Comercial
+}
 
-  @@map("logs_atividade")
+enum usuario_usuario_tipo {
+  Leitor
+  Bibliotecario
+}
+
+enum usuario_usuario_status {
+  Ativo
+  Inativo
+  Bloqueado
 }

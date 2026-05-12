@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # RabbitMQ para mensageria
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_biblioteca
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=adminadmin
+
+  # Banco de Dados MySQL
+  db_usuarios:
+    image: mysql:8.0
+    container_name: db_usuarios_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=biblioteca_usuarios
+    ports:
+      - "3307:3306"
+
+  # Seu Microsserviço
+  micro_usuario:
+    build: ./microservico_usuario
+    container_name: ms_usuario
+    ports:
+      - "9501:9501"
+    depends_on:
+      - rabbitmq
+      - db_usuarios
+    environment:
+      - PORT=9501
+      - DATABASE_URL=mysql://root:root@db_usuarios:3306/biblioteca_usuarios
+      - RABBITMQ_URL=amqp://admin:adminadmin@rabbitmq:5672
