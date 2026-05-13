@@ -33,5 +33,8 @@ services:
       - db_usuarios
     environment:
       - PORT=9501
-      - DATABASE_URL=mysql://root:root@db_usuarios:3306/biblioteca_usuarios
-      - RABBITMQ_URL=amqp://admin:adminadmin@rabbitmq:5672
+      - INFISICAL_CLIENT_ID=b0b1a648-49bd-4f18-95e4-6fb471afcd01
+      - INFISICAL_CLIENT_SECRET=f4436e6fafa6ca73f5d8a63ea7909835635d79859c9eee4d538e97c790fd8b81
+      - INFISICAL_PROJECT_ID=dd1b1e55-c7fb-4759-95c1-ece438ab9df9
+
+      
