@@ -14,10 +14,10 @@ services:
     environment:
       PORT:     9501
       NODE_ENV: production
-      INFISICAL_ENV: ${INFISICAL_ENV}
-
+      
       # Service Token do Infisical (https://app.infisical.com)
       # Gere em: Project → Access Control → Service Tokens
+      INFISICAL_TOKEN: ${INFISICAL_TOKEN}
       CLIENT_ID:      ${CLIENT_ID}
       INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
       INFISICAL_ENV: ${INFISICAL_ENV}

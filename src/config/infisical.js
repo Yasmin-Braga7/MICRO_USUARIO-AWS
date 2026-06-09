@@ -9,9 +9,10 @@
 
 const { InfisicalSDK } = require('@infisical/sdk');
 
-const CLIENT_ID      = process.env.CLIENT_ID      || '0f21ce6e-4709-4498-a418-f1736aa85317';
+const CLIENT_ID            = process.env.CLIENT_ID            || '0f21ce6e-4709-4498-a418-f1736aa85317';
 const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID || 'cb64198c-9fdb-4106-94a3-824e4ba6e6d4';
 const INFISICAL_ENV        = process.env.INFISICAL_ENV        || 'e25f7837a52bfd56fe3453ba2f60d5525937a62a301a056ce178cf9adb9e8923';
+const INFISICAL_TOKEN      = process.env.INFISICAL_TOKEN; // Adicionado para corrigir o erro de referência
 
 async function loadSecrets() {
   if (process.env.NODE_ENV !== 'production') {
@@ -21,6 +22,11 @@ async function loadSecrets() {
 
   if (!CLIENT_ID || !INFISICAL_PROJECT_ID) {
     console.error('[Infisical] ❌ CLIENT_ID ou INFISICAL_PROJECT_ID não definidos.');
+    process.exit(1);
+  }
+
+  if (!INFISICAL_TOKEN) {
+    console.error('[Infisical] ❌ INFISICAL_TOKEN não definido.');
     process.exit(1);
   }
 
