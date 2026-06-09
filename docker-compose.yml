@@ -25,7 +25,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
 
       # RabbitMQ
-      RABBITMQ_URL:             ${RABBITMQ_URL:-amqp://admin:adminadmin@academico3.rj.senac.br:5672}
+      RABBITMQ_URL:             ${RABBITMQ_URL:-amqp://admin:admin@academico3.rj.senac.br:5672}
       RABBITMQ_RECONNECT_DELAY: ${RABBITMQ_RECONNECT_DELAY:-5000}
 
     networks:
