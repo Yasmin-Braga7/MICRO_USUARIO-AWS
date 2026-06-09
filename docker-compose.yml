@@ -15,12 +15,11 @@ services:
       PORT:     9501
       NODE_ENV: production
       
-      # Service Token do Infisical (https://app.infisical.com)
-      # Gere em: Project → Access Control → Service Tokens
-      INFISICAL_TOKEN: ${INFISICAL_TOKEN}
-      CLIENT_ID:      ${CLIENT_ID}
-      INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
-      INFISICAL_ENV: ${INFISICAL_ENV}
+      # Autenticação Universal do Infisical (Machine Identity)
+      CLIENT_ID:            ${CLIENT_ID:-3dcf22f2-e6a1-40c3-b3ec-2d553fd42620}
+      CLIENT_SECRET:        ${CLIENT_SECRET:-ccab5e06840ed91b218513a3e5cf450999ff52e0d1e98719edd199853b3f48a8}
+      INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID:-6c550174-d6d5-4d43-a092-b077a62467dd}
+      INFISICAL_ENV:        ${INFISICAL_ENV:-dev}
 
       # Banco de dados — vem do Infisical em produção
       DATABASE_URL: ${DATABASE_URL}

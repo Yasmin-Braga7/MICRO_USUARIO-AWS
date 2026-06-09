@@ -1,18 +1,15 @@
 /**
  * src/config/infisical.js
- * SDK @infisical/sdk v5 — autenticação via accessToken (Service Token)
- *
- * Padrão idêntico ao microsserviço de Empréstimos.
- * Em desenvolvimento (NODE_ENV !== 'production') usa .env local.
- * Em produção, carrega os secrets do vault e injeta em process.env.
+ * SDK @infisical/sdk v5 — autenticação via Universal Auth (Machine Identity)
  */
 
 const { InfisicalSDK } = require('@infisical/sdk');
 
-const CLIENT_ID            = process.env.CLIENT_ID            || '0f21ce6e-4709-4498-a418-f1736aa85317';
-const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID || 'cb64198c-9fdb-4106-94a3-824e4ba6e6d4';
-const INFISICAL_ENV        = process.env.INFISICAL_ENV        || 'e25f7837a52bfd56fe3453ba2f60d5525937a62a301a056ce178cf9adb9e8923';
-const INFISICAL_TOKEN      = process.env.INFISICAL_TOKEN; // Adicionado para corrigir o erro de referência
+// Usando os seus IDs como fallback caso não venham do .env no servidor
+const CLIENT_ID            = process.env.CLIENT_ID            || '3dcf22f2-e6a1-40c3-b3ec-2d553fd42620';
+const CLIENT_SECRET        = process.env.CLIENT_SECRET        || 'ccab5e06840ed91b218513a3e5cf450999ff52e0d1e98719edd199853b3f48a8';
+const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID || '6c550174-d6d5-4d43-a092-b077a62467dd';
+const INFISICAL_ENV        = process.env.INFISICAL_ENV        || 'dev'; // Mude para 'production' ou o slug do ambiente correto se necessário
 
 async function loadSecrets() {
   if (process.env.NODE_ENV !== 'production') {
@@ -20,13 +17,8 @@ async function loadSecrets() {
     return;
   }
 
-  if (!CLIENT_ID || !INFISICAL_PROJECT_ID) {
-    console.error('[Infisical] ❌ CLIENT_ID ou INFISICAL_PROJECT_ID não definidos.');
-    process.exit(1);
-  }
-
-  if (!INFISICAL_TOKEN) {
-    console.error('[Infisical] ❌ INFISICAL_TOKEN não definido.');
+  if (!CLIENT_ID || !CLIENT_SECRET || !INFISICAL_PROJECT_ID) {
+    console.error('[Infisical] ❌ Credenciais incompletas. Faltam chaves do Infisical.');
     process.exit(1);
   }
 
@@ -35,8 +27,11 @@ async function loadSecrets() {
 
     const client = new InfisicalSDK({ siteUrl: 'https://app.infisical.com' });
 
-    // SDK v5: Service Token usa accessToken() diretamente
-    await client.auth().accessToken(INFISICAL_TOKEN);
+    // Autenticação com Universal Auth usando Client ID e Client Secret
+    await client.auth().universalAuth.login({
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET
+    });
 
     const { secrets } = await client.secrets().listSecrets({
       projectId:   INFISICAL_PROJECT_ID,
