@@ -1,5 +1,6 @@
 const Fastify = require('fastify');
 const cors = require('@fastify/cors');
+const multipart = require('@fastify/multipart');
 const usuarioRoutes = require('./routes/usuarios');
 const authRoutes = require('./routes/auth');
 const prismaPlugin = require('./plugins/prisma');
@@ -8,6 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_biblioteca_2026';
 function buildApp(opts = {}) {
   const fastify = Fastify({ logger: true, ...opts });
   fastify.register(cors, { origin: true, methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'], allowedHeaders: ['Content-Type','Authorization'] });
+  fastify.register(multipart, { limits: { fileSize: 5 * 1024 * 1024 } });
   fastify.register(prismaPlugin);
   fastify.addHook('onRequest', async (req) => {
     const authHeader = req.headers.authorization;

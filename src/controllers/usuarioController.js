@@ -172,9 +172,75 @@ async function obterLogs(req, reply) {
   }
 }
 
+async function uploadFoto(req, reply) {
+  try {
+    const data = await req.file();
+    if (!data) {
+      return reply.status(400).send({ success: false, error: 'Nenhum arquivo enviado' });
+    }
+
+    const contentType = data.mimetype;
+    const extensao = (() => {
+      switch (contentType) {
+        case 'image/jpeg':
+        case 'image/jpg':
+          return 'jpg';
+        case 'image/png':
+          return 'png';
+        default:
+          return null;
+      }
+    })();
+
+    if (!extensao) {
+      return reply.status(415).send({ success: false, error: 'Formato não suportado. Use JPG ou PNG.' });
+    }
+
+    const buffer = await data.toBuffer();
+    await service.atualizarFoto(req.params.id, buffer, extensao, data.filename);
+
+    return reply.status(201).send({ success: true, message: 'Foto atualizada com sucesso' });
+  } catch (error) {
+    return reply.status(500).send({ success: false, error: error.message });
+  }
+}
+
+async function exibirFoto(req, reply) {
+  try {
+    const usuario = await service.obterFoto(req.params.id);
+    if (!usuario || !usuario.usuario_imagem || usuario.usuario_imagem.length === 0) {
+      return reply.status(404).send({ success: false, message: 'Foto não encontrada' });
+    }
+
+    const extensao = (usuario.usuario_extensao || 'jpg').toLowerCase();
+    let mediaType;
+    switch (extensao) {
+      case 'png':
+        mediaType = 'image/png';
+        break;
+      default:
+        mediaType = 'image/jpeg';
+    }
+
+    // decodifica o base64 (string com prefixo data:...) de volta pra bytes puros
+    const base64Str = usuario.usuario_imagem.toString('utf-8');
+    const base64SemPrefixo = base64Str.substring(base64Str.indexOf(',') + 1);
+    const imagem = Buffer.from(base64SemPrefixo, 'base64');
+
+    return reply
+      .header('Content-Type', mediaType)
+      .header('Cache-Control', 'no-cache')
+      .header('Content-Disposition', `inline; filename="${usuario.usuario_imagem_nome || 'foto.jpg'}"`)
+      .send(imagem);
+  } catch (error) {
+    return reply.status(500).send({ success: false, error: error.message });
+  }
+}
+
 module.exports = {
   listar, obterPorId, criar, atualizar, alterarStatus, remover,
   listarEnderecos, atualizarEndereco, limparEndereco,
   listarTelefones, atualizarTelefone, limparTelefone,
-  buscarPorEmail, listarInativos, atualizarCargo, exportarDados, obterLogs
+  buscarPorEmail, listarInativos, atualizarCargo, exportarDados, obterLogs,
+  uploadFoto, exibirFoto
 };

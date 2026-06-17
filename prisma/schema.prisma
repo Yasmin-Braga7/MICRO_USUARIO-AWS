@@ -36,6 +36,9 @@ model usuario {
   usuario_data_cadastro DateTime                @db.Date
   endereco_id           Int
   telefone_id           Int
+  usuario_imagem        Bytes?                  @db.LongBlob
+  usuario_extensao      String?                 @db.VarChar(10)
+  usuario_imagem_nome   String?                 @db.VarChar(255)
   endereco              endereco                @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_endereco1")
   telefone              telefone                @relation(fields: [telefone_id], references: [telefone_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_telefone1")
 

@@ -30,6 +30,10 @@ async function usuarioRoutes(fastify) {
   fastify.post('/:id/telefones', ctrl.atualizarTelefone);// Rota 17 (funciona como o put)
   fastify.put('/:id/telefone', ctrl.atualizarTelefone);  // Rota 18 (extra)
   fastify.delete('/:id/telefone', ctrl.limparTelefone);  // Rota extra/18
+
+  // foto de perfil
+  fastify.post('/:id/foto', ctrl.uploadFoto);            // Upload de foto
+  fastify.get('/:id/foto', ctrl.exibirFoto);             // Exibir foto
 }
 
 module.exports = usuarioRoutes;

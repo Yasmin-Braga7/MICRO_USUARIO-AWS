@@ -146,9 +146,38 @@ async function obterLogs(id) {
   return []; 
 }
 
+// === foto de perfil ===
+
+// salva a foto do usuario no banco como base64 (mesmo padrao do catalogo)
+async function atualizarFoto(id, imagemBuffer, extensao, imagemNome) {
+  const contentType = extensao === 'png' ? 'image/png' : 'image/jpeg';
+  const base64 = imagemBuffer.toString('base64');
+  const prefixo = `data:${contentType};base64,`;
+  const base64ComPrefixo = prefixo + base64;
+
+  return prisma.usuario.update({
+    where: { usuario_id: Number(id) },
+    data: {
+      usuario_imagem: Buffer.from(base64ComPrefixo, 'utf-8'),
+      usuario_extensao: extensao,
+      usuario_imagem_nome: imagemNome
+    }
+  });
+}
+
+// retorna os dados da foto do usuario
+async function obterFoto(id) {
+  const usuario = await prisma.usuario.findUnique({
+    where: { usuario_id: Number(id) },
+    select: { usuario_imagem: true, usuario_extensao: true, usuario_imagem_nome: true }
+  });
+  return usuario;
+}
+
 module.exports = { 
   listar, obterPorId, criar, atualizar, alterarStatus, remover, 
   listarEnderecos, atualizarEndereco, limparEndereco,
   listarTelefones, atualizarTelefone, limparTelefone,
-  buscarPorEmail, listarInativos, atualizarCargo, obterLogs
+  buscarPorEmail, listarInativos, atualizarCargo, obterLogs,
+  atualizarFoto, obterFoto
 };
