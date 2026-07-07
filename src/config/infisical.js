@@ -10,6 +10,7 @@ const CLIENT_SECRET        = process.env.CLIENT_SECRET        || 'ccab5e06840ed9
 const INFISICAL_TOKEN      = process.env.INFISICAL_TOKEN;
 const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID || '6c550174-d6d5-4d43-a092-b077a62467dd';
 const INFISICAL_ENV        = process.env.INFISICAL_ENV        || 'dev';
+const INFISICAL_SECRET_PATH = process.env.INFISICAL_SECRET_PATH || '/';
 
 async function loadSecrets() {
   if (process.env.NODE_ENV !== 'production') {
@@ -32,7 +33,7 @@ async function loadSecrets() {
   }
 
   try {
-    console.log(`[Infisical] Conectando... projeto: ${INFISICAL_PROJECT_ID} | ambiente: ${INFISICAL_ENV}`);
+    console.log(`[Infisical] Conectando... projeto: ${INFISICAL_PROJECT_ID} | ambiente: ${INFISICAL_ENV} | pasta: ${INFISICAL_SECRET_PATH}`);
 
     const client = new InfisicalSDK({ siteUrl: 'https://app.infisical.com' });
 
@@ -50,7 +51,7 @@ async function loadSecrets() {
     const { secrets } = await client.secrets().listSecrets({
       projectId:   INFISICAL_PROJECT_ID,
       environment: INFISICAL_ENV,
-      secretPath:  '/',
+      secretPath:  INFISICAL_SECRET_PATH,
     });
 
     let count = 0;
