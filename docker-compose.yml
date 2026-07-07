@@ -21,6 +21,7 @@ services:
       CLIENT_SECRET:        ${CLIENT_SECRET}
       INFISICAL_PROJECT_ID: ${INFISICAL_PROJECT_ID}
       INFISICAL_ENV:        ${INFISICAL_ENV:-dev}
+      INFISICAL_SECRET_PATH: ${INFISICAL_SECRET_PATH:-/}
 
       # Banco de dados — vem do .env em produção
       DATABASE_URL: ${DATABASE_URL}
