@@ -13,18 +13,13 @@ const INFISICAL_ENV        = process.env.INFISICAL_ENV        || 'dev';
 const INFISICAL_SECRET_PATH = process.env.INFISICAL_SECRET_PATH || '/';
 
 async function loadSecrets() {
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('[Infisical] NODE_ENV !== production — usando variáveis locais (.env)');
-    return;
-  }
-
   // Verifica se temos pelo menos uma forma válida de autenticação
   const temServiceToken = !!INFISICAL_TOKEN;
   const temUniversalAuth = !!(CLIENT_ID && CLIENT_SECRET);
 
   if (!temServiceToken && !temUniversalAuth) {
-    console.error('[Infisical] ❌ Credenciais incompletas. Defina INFISICAL_TOKEN ou CLIENT_ID/CLIENT_SECRET.');
-    process.exit(1);
+    console.log('[Infisical] Credenciais ausentes — usando variáveis locais (.env).');
+    return;
   }
 
   if (!INFISICAL_PROJECT_ID) {
